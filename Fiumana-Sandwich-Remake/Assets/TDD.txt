@@ -1,0 +1,58 @@
+						SANDWICH! REMAKE
+
+L'obbiettivo del progetto è creare un remake del gioco Sandwixh!, un mobile game puzzle nel quale si impilano condi-
+menti uno sull'altro tra due fette di pane.
+
+						MECCANICHE PRINCIPALI
+
+1) I puzzle vengono creati con un algoritmo semplicissimo: il sistema genera un numero condizionato di condimenti;
+   il sistema posiziona le due fette di pane per prime; queste devono sempre essere adiacenti, altrimenti il livello 
+   non è completabile. Una volta piazzate quelle, le fette di condimento sono posizionate facilmente scegliendo una
+   fetta casuale già posizionata e piazzando una nuova fetta in una delle quattro posizioni cardinali. Una volta che
+   le fette create sono pari al numero generato, il quadro si considera pronto per giocare.
+
+2) I modificatori. Nel gioco ce n'è solo 1, ovvero le api, che ti costringono a muovere un prestabilito numero di 
+   fette prima di poter spostare quella. Nella finestra è necessario inserire la possibilità di attaccare modifica-
+   tori alla fetta. 
+
+3) Come si identificano le fette? Sono oggetti, senza script, con un identificatore ed un collider. Quando toccati
+   da un raycast vengono selezionati.
+
+4) Lo swipe delle fette. La griglia deve tracciare i movimenti delle fette e controllare le posizioni, perché come
+   visto nel gioco tentare di muoversi in una posizione vuota è impossibile e le posizioni sono dinamiche a seconda
+   delle mosse del giocatore. Credo che il modo più semplice in questo caso sia anche il più efficace: quando una
+   fetta viene swipata in una direzione, viene effettuato uno spherecast nella direzione impostata e se viene trova-
+   ta una fetta il movimento è effettuato, altrimenti si annulla il comando. Le fette di pane inoltre non sono
+   spostabili, se non per chiudere il panino.
+
+5) Siccome le fette di pane non si muovono, il gioco consiste nell'impilare ingredienti uno sull'altro fino a
+   portarli sulle fette di pane ferme. Quali sono i controlli strettamente necessari? 
+
+    A. Se è una fetta di pane sta ferma.
+    B. Se un ingrediente viene mosso su un altro questi vengano accomunati in una pila. E se una pila viene mossa
+       su un'altra pila, che queste vengano sovrapposte ed unite. 
+    C. Se ci sono due pile, che contengono gli ingredienti nella loro totalità, ed entrambe contengono una fetta
+       di pane, allora le due pile possono essere mosse l'una sull'altra 
+
+   Quindi ci sono due tipi di "pile": le pile di controllo e le pile generiche.
+ 
+   Le pile di controllo sono immediatamente create all'inizio della partita e corrispondono alle due fette di pane. 
+   Su di esse viene fatto un controllo costante: se sommate contengono la totalità degli ingredienti allora possono 
+   essere mosse l'una sull'altra per completare il livello.
+
+   Le pile generiche non sono soggette ad alcun tipo di calcolo, e servono solo in funzione del movimento. Esse sono
+   solamente unioni di fette generiche riunite sotto un oggetto padre creato al momento della sovrapposizione di due
+   ingredienti. Quando due pile sono unite, viene eliminato uno dei due padri "stack" e vengono tutti accomunati
+   sotto lo stesso oggetto. Toccando una fetta, se questa ha un padre "stack" esso viene selezionato nella sua
+   interezza, altrimenti solo la fetta singola.
+
+6) Si vince quando, a seguito della verifica della condizione C ed all'unione delle due pile di controllo, il panino
+   viene chiuso. Si comincia direttamente il livello successivo in questo modo.
+
+7) C'è un sistema di Undo. Quindi è necessario creare, questa volta davvero, una stack di azioni dalla quale sia
+   possibile identificare l'ultimo movimento compiuto -ed eventualmente creazione o aggiunta ad una stack- per in-
+   vertirlo. Si possono identificare le funzioni chiamate, gli oggetti selezionati ed i valori considerati ed inse-
+   rirli in una funzione che inverte tutte le operazioni compiute.
+   
+8) Il bottone Retry resetta il livello, riportando le fette alla posizione originale. E' ingannevole, perché sembra
+   di dover fare una nuova funzione, mentre in realtà è un'esecuzione sequenziale dell'intera stack Undo.
