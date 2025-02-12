@@ -258,14 +258,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1483168387}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b83a8e8c6a00ef4faa51292513df172, type: 3}
+  m_Script: {fileID: 11500000, guid: 643baaf6bdc2b4e4d8b3f8b42cc3de80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IngrInLevel: 6
   Slice: {fileID: 3157849547907373860, guid: 4a3a840c7c9977b46a7a38bc1f6143eb, type: 3}
-  allMaterials:
-  - {fileID: 2100000, guid: 37e5e363a4c76dd4fa37047f9e80ecc6, type: 2}
-  GenerateLev: 0
-  ClearLev: 0
+  GenLev: 0
 --- !u!1 &1721372705
 GameObject:
   m_ObjectHideFlags: 0

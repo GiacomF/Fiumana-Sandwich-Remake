@@ -15,21 +15,6 @@ public class LevelGenerator : MonoBehaviour
         return directions[Random.Range(0, directions.Length)];
     }
 
-    private void GenerateBreadSlices()
-    {
-        for(int i = 0; i < 2; i++)
-        {
-            GameObject bread = Instantiate(Slice, Vector3.zero, Quaternion.identity);
-            bread.name = "Bread";
-            bread.GetComponent<MeshRenderer>().material = allMaterials[0];
-            if(i > 0)
-            {
-                ChangeSlicePosition(bread, i-1);
-            }
-            slicesInLevel[i] = bread;
-        }
-    }
-
     private void ChangeSlicePosition(GameObject obj, int j)
     {
         if(slicesInLevel[j] != null)
@@ -46,6 +31,22 @@ public class LevelGenerator : MonoBehaviour
             occupiedDirection = -RandomDir;
         }
     }
+    
+    private void GenerateBreadSlices()
+    {
+        for(int i = 0; i < 2; i++)
+        {
+            GameObject bread = Instantiate(Slice, Vector3.zero, Quaternion.identity);
+            bread.name = "Bread";
+            bread.GetComponent<MeshRenderer>().material = allMaterials[0];
+            if(i > 0)
+            {
+                ChangeSlicePosition(bread, i-1);
+            }
+            slicesInLevel[i] = bread;
+        }
+    }
+
 
     private void GenerateLevel()
     {

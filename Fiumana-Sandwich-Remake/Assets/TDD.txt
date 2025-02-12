@@ -8,8 +8,10 @@ menti uno sull'altro tra due fette di pane.
 1) I puzzle vengono creati con un algoritmo semplicissimo: il sistema genera un numero condizionato di condimenti;
    il sistema posiziona le due fette di pane per prime; queste devono sempre essere adiacenti, altrimenti il livello 
    non è completabile. Una volta piazzate quelle, le fette di condimento sono posizionate facilmente scegliendo una
-   fetta casuale già posizionata e piazzando una nuova fetta in una delle quattro posizioni cardinali. Una volta che
-   le fette create sono pari al numero generato, il quadro si considera pronto per giocare.
+   fetta casuale già posizionata e piazzando una nuova fetta in una delle quattro posizioni cardinali. Per garanti-
+   re che le fette non si sovrappongano, genererò le coordinate rapidamente e le confornterò, generando nuovanente
+   quanlunque coordinata che risulti uguale ad un'altra.
+   Una volta che le fette create sono pari al numero generato, il quadro si considera pronto per giocare.
 
 2) I modificatori. Nel gioco ce n'è solo 1, ovvero le api, che ti costringono a muovere un prestabilito numero di 
    fette prima di poter spostare quella. Nella finestra è necessario inserire la possibilità di attaccare modifica-

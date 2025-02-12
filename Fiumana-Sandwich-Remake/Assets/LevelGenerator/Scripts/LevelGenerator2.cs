@@ -3,101 +3,143 @@ using UnityEngine;
 
 public class LevelGenerator2 : MonoBehaviour
 {
-    [SerializeField] private static int ingrInLevel = 3; 
-    public GameObject Slice;
-    public List<Material> allMaterials;
-    private static float sliceScale = 0;
-    private static Vector3 occupiedDirection;
+    /*
 
-    private struct Level
+    Il metodo di generazione è questo: quando un punto viene generato, esclusi il primo ed il secondo, viene creata una lista di posizioni disponibili; 
+    se ne estrae una a sorte e si genera il punto; se il punto corrisponde ad un'altro, si esclude la direzione selezionata dalla lista e se ne tira
+    a sorte una nuova. Così fino a quando il punto non viene generato. Se la lista si esaurisce, allora viene selezionato un nuovo punto.
+
+    metodo SelectRandomDirection()
     {
-        public Vector3[] positions;
-        public Level(int i)
-        {
-            positions = new Vector3[i + 2];
-        }
+        apriamo un array[] di vettori3 e li definiamo = { su, -su, destra, -destra };
+        return directions[Randm.Range(0, directions.Length)];
     }
 
-    private Vector3 RandomDirection()
+    metodo SpostaIlPunto()
     {
-        Vector3[] directions = { Vector3.forward, -Vector3.forward, Vector3.right, Vector3.left};
-        return directions[Random.Range(0, directions.Length)];
+        seleziona una direzione randomica in cui piazzare il punto = SelectRandomDirection
     }
 
-    private Vector3 ChangeSlicePosition(int j)
+    array[] di vettori3 grandi come il numero di ingredienti + 2;
+    Gameobject Slice;
+    float Larghezza di Slice = slice.transform.localScale.x; Forse questo va messo in un metodo inizializzatore e poi in Start;
+    metodo GeneraUnaPosizione()
     {
-        //Ensure no overlapping between slices excluding the last occupied position
-        Vector3 RandomDir = RandomDirection();
-            
-        while(RandomDir == occupiedDirection)
+        ciclo for (i = 0; i < ingredients + 2; i++)
         {
-            RandomDir = RandomDirection();
-        }
-
-        occupiedDirection = -RandomDir;
-        return currLevel.positions[j] += RandomDir * sliceScale;
-    }
-
-    private bool PosOverlaps(Vector3 curPoint)
-    {
-        bool state = false;
-        for(int i = 0; i < currLevel.positions.Length; i++)
-        {
-            if(currLevel.positions[i] == curPoint)
+            Istanzia un Vector3 in posizione 0 0 0;
+            Se il ciclo è > 0
             {
-                state = true;
+                prendi il punto e spostalo in posizione adiacente al primo a distanza 
+            }
+        }
+    }
+
+    */
+
+    private static List<Vector3> DIRECTIONS;
+    Vector3[] positions;
+    GameObject[] slices;
+    [SerializeField] int IngrInLevel;
+    public GameObject Slice;
+    float spacing;
+    private void Init()
+    {
+        DIRECTIONS = new List<Vector3>{ Vector3.forward, -Vector3.forward, Vector3.right, -Vector3.right };
+        positions = new Vector3[IngrInLevel + 2];
+        slices = new GameObject[IngrInLevel + 2];
+        spacing = Slice.transform.localScale.x;
+        IngrInLevel += 2;
+    }
+
+    private void Start()
+    {
+        Init();   
+    }
+
+    private bool CheckForOccupiedPos(Vector3 posToCheck)
+    {
+        for(int i = 0; i < IngrInLevel; i++)
+        {
+            if(posToCheck == positions[i])
+            {
+                Debug.Log("Position Occupied! Choose another one!");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Vector3 GeneratePosition(Vector3 startPosition)
+    {
+        List<Vector3> possibleDirections = new List<Vector3>(DIRECTIONS); 
+
+        while (possibleDirections.Count > 0) 
+        {
+            Vector3 randomDir = possibleDirections[Random.Range(0, possibleDirections.Count)]; 
+            Vector3 newPos = startPosition + randomDir * spacing; 
+
+            if (!CheckForOccupiedPos(newPos)) 
+            {
+                return newPos;
+            }
+
+            Debug.Log($"Direction {randomDir} was already occupied!");
+            possibleDirections.Remove(randomDir);
+        }
+
+        return startPosition; 
+    }
+
+
+    private void GenerateLevel()
+    {
+        positions = new Vector3[IngrInLevel + 2];
+
+        positions[0] = Vector3.zero;
+        if(slices[0] == null)
+        {
+            slices[0] = Instantiate(Slice, positions[0], Quaternion.identity);
+        }
+        else
+        {
+            slices[0].transform.position = positions[0];
+        }
+
+        positions[1] = positions[0] + DIRECTIONS[Random.Range(0, DIRECTIONS.Count)] * spacing;
+        if(slices[1] == null)
+        {
+            slices[1] = Instantiate(Slice, positions[1], Quaternion.identity);
+        }
+        else
+        {
+            slices[1].transform.position = positions[1];
+        }
+
+        for (int i = 2; i < IngrInLevel; i++)
+        {
+            Vector3 referencePos = positions[Random.Range(0, i)];
+            positions[i] = GeneratePosition(referencePos);
+            if(slices[i] == null)
+            {
+                slices[i] = Instantiate(Slice, positions[i], Quaternion.identity);
             }
             else
             {
-                state = false;
-            }
-        }
-        return state;
-    }
-
-    private static Level currLevel;
-    private void GenerateLevel()
-    {
-        currLevel = new Level(ingrInLevel);
-
-        for (int i = 0; i < currLevel.positions.Length; i++)
-        {
-            currLevel.positions[i] = new Vector3(0, 0, 0);
-            if(i > 0)
-            {
-                currLevel.positions[i] = ChangeSlicePosition(i-1);
-            }
-            else if (i > 1)
-            {
-                int randomIndex = Random.Range(0, ingrInLevel);
-
-                currLevel.positions[i] = currLevel.positions[randomIndex];
-
-                while(PosOverlaps(currLevel.positions[i]))
-                {
-                    currLevel.positions[i] = ChangeSlicePosition(i);
-                }
+                slices[i].transform.position = positions[i];
             }
         }
     }
 
-    private float GetSliceScale()
-    {
-        return Slice.transform.localScale.x;
-    }
 
-    void Awake()
-    {   
-        occupiedDirection = new Vector3();
-    }
-
-    public bool GenerateLev;
+    public bool GenLev;
     private void Update()
     {
-        if(GenerateLev)
+        if(GenLev)
         {
-            GetSliceScale();
             GenerateLevel();
-        }
+            GenLev = false;
+        }   
     }
 }
