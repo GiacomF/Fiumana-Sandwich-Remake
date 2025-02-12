@@ -92,7 +92,7 @@ public class LevelGenerator2 : MonoBehaviour
         return startPosition; 
     }
 
-
+    public Material[] materials;
     private void GenerateLevel()
     {
         positions = new Vector3[IngrInLevel + 2];
@@ -101,6 +101,7 @@ public class LevelGenerator2 : MonoBehaviour
         if(slices[0] == null)
         {
             slices[0] = Instantiate(Slice, positions[0], Quaternion.identity);
+            slices[0].GetComponent<MeshRenderer>().material = materials[0];
         }
         else
         {
@@ -111,6 +112,7 @@ public class LevelGenerator2 : MonoBehaviour
         if(slices[1] == null)
         {
             slices[1] = Instantiate(Slice, positions[1], Quaternion.identity);
+            slices[1].GetComponent<MeshRenderer>().material = materials[1];
         }
         else
         {

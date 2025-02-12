@@ -263,6 +263,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IngrInLevel: 6
   Slice: {fileID: 3157849547907373860, guid: 4a3a840c7c9977b46a7a38bc1f6143eb, type: 3}
+  materials:
+  - {fileID: 2100000, guid: 37e5e363a4c76dd4fa37047f9e80ecc6, type: 2}
   GenLev: 0
 --- !u!1 &1721372705
 GameObject:
