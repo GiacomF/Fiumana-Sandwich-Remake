@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Diagnostics;
 public class LevelGenerator2 : MonoBehaviour
 {
     /*
@@ -69,9 +69,10 @@ public class LevelGenerator2 : MonoBehaviour
         return false;
     }
 
-    private Vector3 GeneratePosition(Vector3 startPosition)
+    private Vector3 GeneratePosition()
     {
-        List<Vector3> possibleDirections = new List<Vector3>(DIRECTIONS); 
+        List<Vector3> possibleDirections = new List<Vector3>(DIRECTIONS);
+        Vector3 startPosition = positions[Random.Range(0, positions.Length)]; 
 
         while (possibleDirections.Count > 0) 
         {
@@ -86,33 +87,15 @@ public class LevelGenerator2 : MonoBehaviour
             possibleDirections.Remove(randomDir);
         }
 
-        Vector3 newStart = positions[Random.Range(0, positions.Length)];
-
-        return GeneratePosition(newStart); 
+        return GeneratePosition(); 
     }
 
     public Material[] materials;
     private void GenerateLevel()
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
         positions = new Vector3[IngrInLevel];
-
-        /*if (slices.Length != IngrInLevel)
-        {
-            for (int y = 0; y < slices.Length; y++)
-            {
-                Destroy(slices[y]);
-            }
-
-            slices = new GameObject[IngrInLevel];
-        }
-
-        for(int j = 0; j < IngrInLevel; j++)
-        {
-            if(slices[j] == null)
-            {
-                slices[j] = Instantiate(Slice);
-            }
-        }*/
 
         if (slices == null || slices.Length != IngrInLevel)
         {
@@ -142,8 +125,7 @@ public class LevelGenerator2 : MonoBehaviour
             }
             else
             {
-                Vector3 referencePos = positions[Random.Range(0, positions.Length)];
-                positions[i] = GeneratePosition(referencePos);
+                positions[i] = GeneratePosition();
             }
 
             newSlice.transform.position = positions[i];
@@ -156,35 +138,8 @@ public class LevelGenerator2 : MonoBehaviour
             slices[i] = newSlice;
         }
 
-        /*for (int i = 0; i < IngrInLevel; i++)
-        {
-            if(i<2)
-            {
-                string sliceName = "Bread";
-                if(i < 1)
-                {
-                    positions[i] = Vector3.zero;
-                    slices[i].transform.position = positions[i];
-                    slices[i].GetComponent<MeshRenderer>().material = materials[0];
-                    slices[i].name = sliceName;
-                }
-                else
-                {
-                    positions[i] += DIRECTIONS[Random.Range(0, DIRECTIONS.Count)] * spacing;
-                    slices[i].transform.position = positions[i];
-                    slices[i].GetComponent<MeshRenderer>().material = materials[0];
-                    slices[i].name = sliceName;
-                }
-            }
-            else
-            {
-                string sliceName = "Ingredient";
-                Vector3 referencePos = positions[Random.Range(0, i)];
-                positions[i] = GeneratePosition(referencePos);
-                slices[i].transform.position = positions[i];
-                slices[i].name = sliceName;
-            }
-        }*/
+        stopwatch.Stop();
+        UnityEngine.Debug.Log($"Execution time is: {stopwatch.ElapsedTicks} ticks");
     }
 
     public bool GenLev;
