@@ -46,10 +46,9 @@ public class LevelGenerator2 : MonoBehaviour
     private void Init()
     {
         DIRECTIONS = new List<Vector3>{ Vector3.forward, -Vector3.forward, Vector3.right, -Vector3.right };
-        positions = new Vector3[IngrInLevel + 2];
-        slices = new GameObject[IngrInLevel + 2];
+        positions = new Vector3[IngrInLevel];
+        slices = new GameObject[IngrInLevel];
         spacing = Slice.transform.localScale.x;
-        IngrInLevel += 2;
     }
 
     private void Start()
@@ -63,7 +62,6 @@ public class LevelGenerator2 : MonoBehaviour
         {
             if(posToCheck == positions[i])
             {
-                Debug.Log("Position Occupied! Choose another one!");
                 return true;
             }
         }
@@ -85,21 +83,27 @@ public class LevelGenerator2 : MonoBehaviour
                 return newPos;
             }
 
-            Debug.Log($"Direction {randomDir} was already occupied!");
             possibleDirections.Remove(randomDir);
         }
 
-        return startPosition; 
+        Vector3 newStart = positions[Random.Range(0, positions.Length)];
+
+        return GeneratePosition(newStart); 
     }
 
     public Material[] materials;
     private void GenerateLevel()
     {
-        positions = new Vector3[IngrInLevel + 2];
+        positions = new Vector3[IngrInLevel];
 
-        if (slices.Length != IngrInLevel + 2)
+        /*if (slices.Length != IngrInLevel)
         {
-            slices = new GameObject[IngrInLevel + 2];
+            for (int y = 0; y < slices.Length; y++)
+            {
+                Destroy(slices[y]);
+            }
+
+            slices = new GameObject[IngrInLevel];
         }
 
         for(int j = 0; j < IngrInLevel; j++)
@@ -108,9 +112,51 @@ public class LevelGenerator2 : MonoBehaviour
             {
                 slices[j] = Instantiate(Slice);
             }
+        }*/
+
+        if (slices == null || slices.Length != IngrInLevel)
+        {
+            foreach (var slice in slices)
+            {
+                if (slice != null) Destroy(slice);
+            }
+
+            slices = new GameObject[IngrInLevel];
         }
 
         for (int i = 0; i < IngrInLevel; i++)
+        {
+            bool isBread = i < 2;
+            string sliceName = isBread ? "Bread" : "Ingredient";
+
+            GameObject newSlice = slices[i] ?? Instantiate(Slice);
+            newSlice.name = sliceName;
+
+            if(i < 1)
+            {
+                positions[i] = Vector3.zero;
+            }
+            else if(i > 0 && i < 2)
+            {
+                positions[i] = positions[0] + DIRECTIONS[Random.Range(0, DIRECTIONS.Count)] * spacing;
+            }
+            else
+            {
+                Vector3 referencePos = positions[Random.Range(0, positions.Length)];
+                positions[i] = GeneratePosition(referencePos);
+            }
+
+            newSlice.transform.position = positions[i];
+
+            if(isBread)
+            {
+                newSlice.GetComponent<MeshRenderer>().material = materials[0];
+            }
+
+            slices[i] = newSlice;
+        }
+
+        /*for (int i = 0; i < IngrInLevel; i++)
         {
             if(i<2)
             {
@@ -138,9 +184,8 @@ public class LevelGenerator2 : MonoBehaviour
                 slices[i].transform.position = positions[i];
                 slices[i].name = sliceName;
             }
-        }
+        }*/
     }
-
 
     public bool GenLev;
     private void Update()
