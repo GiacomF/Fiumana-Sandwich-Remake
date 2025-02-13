@@ -97,39 +97,46 @@ public class LevelGenerator2 : MonoBehaviour
     {
         positions = new Vector3[IngrInLevel + 2];
 
-        positions[0] = Vector3.zero;
-        if(slices[0] == null)
+        if (slices.Length != IngrInLevel + 2)
         {
-            slices[0] = Instantiate(Slice, positions[0], Quaternion.identity);
-            slices[0].GetComponent<MeshRenderer>().material = materials[0];
-        }
-        else
-        {
-            slices[0].transform.position = positions[0];
+            slices = new GameObject[IngrInLevel + 2];
         }
 
-        positions[1] = positions[0] + DIRECTIONS[Random.Range(0, DIRECTIONS.Count)] * spacing;
-        if(slices[1] == null)
+        for(int j = 0; j < IngrInLevel; j++)
         {
-            slices[1] = Instantiate(Slice, positions[1], Quaternion.identity);
-            slices[1].GetComponent<MeshRenderer>().material = materials[1];
-        }
-        else
-        {
-            slices[1].transform.position = positions[1];
-        }
-
-        for (int i = 2; i < IngrInLevel; i++)
-        {
-            Vector3 referencePos = positions[Random.Range(0, i)];
-            positions[i] = GeneratePosition(referencePos);
-            if(slices[i] == null)
+            if(slices[j] == null)
             {
-                slices[i] = Instantiate(Slice, positions[i], Quaternion.identity);
+                slices[j] = Instantiate(Slice);
+            }
+        }
+
+        for (int i = 0; i < IngrInLevel; i++)
+        {
+            if(i<2)
+            {
+                string sliceName = "Bread";
+                if(i < 1)
+                {
+                    positions[i] = Vector3.zero;
+                    slices[i].transform.position = positions[i];
+                    slices[i].GetComponent<MeshRenderer>().material = materials[0];
+                    slices[i].name = sliceName;
+                }
+                else
+                {
+                    positions[i] += DIRECTIONS[Random.Range(0, DIRECTIONS.Count)] * spacing;
+                    slices[i].transform.position = positions[i];
+                    slices[i].GetComponent<MeshRenderer>().material = materials[0];
+                    slices[i].name = sliceName;
+                }
             }
             else
             {
+                string sliceName = "Ingredient";
+                Vector3 referencePos = positions[Random.Range(0, i)];
+                positions[i] = GeneratePosition(referencePos);
                 slices[i].transform.position = positions[i];
+                slices[i].name = sliceName;
             }
         }
     }
