@@ -134,6 +134,10 @@ public class LevelGenerator2 : MonoBehaviour
             {
                 newSlice.GetComponent<MeshRenderer>().material = materials[0];
             }
+            else
+            {
+                newSlice.GetComponent<MeshRenderer>().material = materials[Random.Range(1, materials.Length)];
+            }
 
             slices[i] = newSlice;
         }
